@@ -126,22 +126,6 @@
   bne -
 }
 
-!macro PrintText_Shifted .target, .source, .source_end {
-  ldx #$00
--
-  lda .source, x
-  bpl +
-  eor #$80
-  bne ++
-+
-  and #$3f
-++
-  sta .target, x
-  inx
-  cpx #.source_end - .source
-bne -
-}
-
 !macro PrepareScroll_1x1 .message, .selfmod {
   lda #<.message
   sta .selfmod + 1
@@ -338,14 +322,12 @@ read1x2
   sta $d018
 }
 
-!macro UpperCase {
-  lda #$15
-  sta $d018
+!macro CBMFontUpperGfx {
+  +SelectVICMemory $0400, $1000
 }
 
-!macro LowerCase {
-  lda #$17
-  sta $d018
+!macro CBMFontLowerUpper {
+  +SelectVICMemory $0400, $1800
 }
 
 !macro WaitSpace {
@@ -444,7 +426,7 @@ read1x2
 }
 
 !macro SetRaster .raster , .irqaddr {
-  lda #.raster
+  lda #(.raster & $ff)
 	sta $d012
   lda $d011
 	!if (.raster > 255) {
@@ -457,7 +439,7 @@ read1x2
 }
 
 !macro SetRaster .raster , .irqaddr, .brkaddr {
-  lda #.raster
+  lda #(.raster & $ff)
 	sta $d012
   lda $d011
 	!if (.raster > 255) {

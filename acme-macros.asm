@@ -29,7 +29,7 @@
   !byte $30 + ((.code_start / 100) % 10)
   !byte $30 + ((.code_start / 10) % 10)
   !byte $30 + (.code_start % 10)
-	!byte 0
+  !byte 0
 .next_line
   !byte 0, 0
 .code_start
@@ -45,10 +45,10 @@
   !byte $30 + ((.code_start / 10) % 10)
   !byte $30 + (.code_start % 10)
   !byte $3a, $8f, $20
-	!fill .del_count, $14
+  !fill .del_count, $14
   !pet "(c)2019 simon/cgtr"
   !fill .cr_count, $0d
-	!byte 0
+  !byte 0
 .next_line
   !byte 0, 0
 .code_start
@@ -59,21 +59,21 @@
   lda #.data
 -
   sta .target + $0000, x
-	sta .target + $0100, x
-	sta .target + $0200, x
-	sta .target + $02e8, x
-	inx
+  sta .target + $0100, x
+  sta .target + $0200, x
+  sta .target + $02e8, x
+  inx
   bne -
 }
 
 !macro FillBlock .target, .addr, .count {
-	ldx #$00
-	lda .addr
+  ldx #$00
+  lda .addr
 -
-	sta .target, x
-	inx
-	cpx #.count
-	bne -
+  sta .target, x
+  inx
+  cpx #.count
+  bne -
 }
 
 !macro FillBlock .target, .data, .count, .repeat {
@@ -83,21 +83,21 @@
   !for i, 0, (.repeat - 1) {
     sta .target + .count * i, x
   }
-	inx
+  inx
   cpx #.count
   bne -
 }
 
 !macro CopyBlock .target, .source, .count, .repeat {
-	ldx #$00
+  ldx #$00
 -
   !for i, 0, (.repeat - 1) {
     lda .source + .count * i, x
     sta .target + .count * i, x
   }
-	inx
-	cpx #.count
-	bne -
+  inx
+  cpx #.count
+  bne -
 }
 
 !macro CopyBlock .target, .source, .count {
@@ -271,43 +271,43 @@ read1x2
 }
 
 !macro Wait .delay {
-  !if (.delay > 255) {
-  ldx #.delay >> 255
+  !if (.delay > $ff) {
+    ldx #(.delay >> $ff)
 --
-  ldy #.delay & 255
+    ldy #(.delay & $ff)
 -
     dey
     bne -
     dex
     bne --
   } else {
-	  ldy #.delay
+    ldy #.delay
 -
     dey
-	  bne -
+    bne -
   }
 }
 
 !macro SetColors .color {
-	lda #.color
+  lda #.color
   sta $d020
-	sta $d021
+  sta $d021
 }
 
 !macro SetColors .border, .backgnd {
-	lda #.border
+  lda #.border
   sta $d020
-	lda #.backgnd
-	sta $d021
+  lda #.backgnd
+  sta $d021
 }
 
 !macro PrepareMusic .address, .songnum {
   lda #.songnum
-	jsr .address
+  jsr .address
 }
 
 !macro PlayMusic .address {
-	jsr .address
+  jsr .address
 }
 
 !macro SelectVICBank .bank {
@@ -357,7 +357,6 @@ read1x2
 }
 
 !macro JumpOnSpaceOrFire .address {
--
   lda $dc01
   lsr
   lsr
@@ -419,35 +418,35 @@ read1x2
 }
 
 !macro SetVector .address, .vector {
-	lda #<.address
-	sta .vector
-	lda #>.address
-	sta .vector + 1
+  lda #<.address
+  sta .vector
+  lda #>.address
+  sta .vector + 1
 }
 
 !macro SetRaster .raster , .irqaddr {
   lda #(.raster & $ff)
-	sta $d012
+  sta $d012
   lda $d011
-	!if (.raster > 255) {
+  !if (.raster > $ff) {
     ora #$80
   } else {
-	  and #$7f
+    and #$7f
   }
-	sta $d011
+  sta $d011
   +SetVector .irqaddr, $0314
 }
 
 !macro SetRaster .raster , .irqaddr, .brkaddr {
   lda #(.raster & $ff)
-	sta $d012
+  sta $d012
   lda $d011
-	!if (.raster > 255) {
+  !if (.raster > $ff) {
     ora #$80
   } else {
-	  and #$7f
+    and #$7f
   }
-	sta $d011
+  sta $d011
   +SetVector .irqaddr, $fffe
   +SetVector .brkaddr, $fffa
 }
@@ -455,36 +454,36 @@ read1x2
 !macro EnableRasters .raster, .irqaddr {
   sei
   lda #$7f
-	sta $dc0d
+  sta $dc0d
   sta $dd0d
-	bit $dc0d
+  bit $dc0d
   bit $dd0d
-	lda #$01
-	sta $d019
-	sta $d01a
+  lda #$01
+  sta $d019
+  sta $d01a
   +SetRaster .raster, .irqaddr
-	cli
+  cli
 }
 
 !macro EnableRasters .raster, .irqaddr, .brkaddr {
   sei
   lda #$7f
-	sta $dc0d
+  sta $dc0d
   sta $dd0d
-	bit $dc0d
+  bit $dc0d
   bit $dd0d
-	lda #$01
-	sta $d019
-	sta $d01a
+  lda #$01
+  sta $d019
+  sta $d01a
   +SetRaster .raster, .irqaddr, .brkaddr
-	cli
+  cli
 }
 
 !macro DisableRasters {
   sei
-	lda #$81
-	sta $dc0d
-	sta $dd0d
-	+SetVector $fffe, $0314
+  lda #$81
+  sta $dc0d
+  sta $dd0d
+  +SetVector $fffe, $0314
   cli
 }

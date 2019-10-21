@@ -16,26 +16,26 @@
   +CBMFontLowerUpper
   +PrintText SCREEN_BASE + 40 * 0 + 10, hello, hello_end
 
-	+PrepareMusic MUSIC_BASE, 0
+  +PrepareMusic MUSIC_BASE, 0
 
   +EnableRasters 0, irq_music
 
   jmp *
-  
+
 irq_music
-	inc $d019
-  
+  inc $d019
+
   +PlayMusic MUSIC_BASE + 3
   +JumpOnSpace $fce2
-  
+
   +SetRaster 50, irq_main
   jmp $ea31
 
 irq_main
-	inc $d019
-  
+  inc $d019
+
   +WashLeft COLOR_BASE + 40 * 0 + 10, colors, colors_end, 1, 1
-  
+
   +SetRaster 0, irq_music
   jmp $ea81
 
@@ -49,4 +49,4 @@ colors_end
   !byte $00
 
 *=MUSIC_BASE
-	!bin "irqmusic/commando.sid",,$7c+2
+  !bin "irqmusic/helloworld.sid",,$7c+2

@@ -13,7 +13,7 @@
   +CBMFontLowerUpper
   +PrintText SCREEN_BASE + 10, hello, hello_end
 
-	+PrepareMusic MUSIC_BASE, 0
+  +PrepareMusic MUSIC_BASE, 0
 
   +KernalAndBasic OFF
   +EnableRasters 0, irq_music, brk_music
@@ -21,27 +21,27 @@
   jmp *
 
 irq_music
-	inc $d019
+  inc $d019
   +BackupRegisters
-  
+
   +PlayMusic MUSIC_BASE + 3
   +JumpOnSpace reset
-  
+
   +SetRaster 50, irq_main, brk_main
   +RestoreRegisters
 brk_music
-	rti
+  rti
 
 irq_main
-	inc $d019
+  inc $d019
   +BackupRegisters
-  
+
   +WashLeft COLOR_BASE + 40 * 0 + 10, colors, colors_end, 1, 1
-  
+
   +SetRaster 0, irq_music, brk_music
   +RestoreRegisters
 brk_main
-	rti
+  rti
 
 reset
   +KernalAndBasic ON
@@ -57,4 +57,4 @@ colors_end
   !byte $00
 
 *=MUSIC_BASE
-	!bin "irqmusic/commando.sid",,$7c+2
+  !bin "irqmusic/helloworld.sid",,$7c+2
